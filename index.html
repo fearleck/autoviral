@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoViral Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05060f;--s1:#0a0c1a;--s2:#0f1222;--s3:#161928;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --k1:#00e5ff;--k2:#7b2fff;--k3:#ff2d78;
+  --yellow:#ffe566;--green:#00e5a0;--orange:#ff8c00;
+  --text:#eef0ff;--muted:#545670;--muted2:#8b90aa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:.08}
+.o1{width:700px;height:700px;background:var(--k2);top:-300px;left:-200px;animation:d1 14s ease-in-out infinite}
+.o2{width:500px;height:500px;background:var(--k1);bottom:-200px;right:-150px;animation:d2 11s ease-in-out infinite}
+@keyframes d1{0%,100%{transform:translate(0,0)}50%{transform:translate(80px,50px)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,-70px)}}
+.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:36px 20px 120px}
+.hdr{text-align:center;margin-bottom:40px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:46px;letter-spacing:6px;line-height:1;background:linear-gradient(90deg,var(--k1),var(--k2),var(--k3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.hdr-badge{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:8px 18px;border-radius:20px;border:1px solid rgba(0,229,255,0.2);background:rgba(0,229,255,0.05);font-size:12px;font-weight:600;color:var(--k1)}
+.pipeline{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;margin-bottom:36px}
+.pipe-step{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px;border-radius:12px;border:1px solid var(--border2);background:var(--s1);min-width:90px;transition:all .3s}
+.pipe-step.active{border-color:var(--k1);background:rgba(0,229,255,0.06)}
+.pipe-step.is-auto{border-color:var(--k2);background:rgba(123,47,255,0.06)}
+.pipe-icon{font-size:20px}
+.pipe-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);text-align:center}
+.pipe-step.active .pipe-label{color:var(--k1)}
+.pipe-step.is-auto .pipe-label{color:var(--k2)}
+.pipe-arrow{font-size:16px;color:var(--muted)}
+.pipe-tag{font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.tag-manual{background:rgba(255,140,0,0.15);color:var(--orange)}
+.tag-auto{background:rgba(123,47,255,0.15);color:var(--k2)}
+.tabs-nav{display:flex;gap:4px;margin-bottom:24px;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:4px}
+.tnav{flex:1;padding:10px;text-align:center;border-radius:10px;font-size:12px;font-weight:700;color:var(--muted2);cursor:pointer;transition:all .2s;user-select:none}
+.tnav.on{background:linear-gradient(135deg,var(--k2),var(--k1));color:white}
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:14px}
+.card-title{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.card-title .acc{color:var(--k1);font-size:14px}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted2)}
+.field input,.field textarea{background:var(--s2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;padding:11px 14px;outline:none;transition:border-color .2s;resize:none;width:100%}
+.field input:focus,.field textarea:focus{border-color:var(--k1)}
+.field textarea{height:80px;line-height:1.6}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:7px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--s2);font-size:12px;font-weight:600;color:var(--muted2);cursor:pointer;transition:all .15s;user-select:none}
+.chip.on{border-color:var(--k1);background:rgba(0,229,255,0.08);color:var(--k1)}
+.sl-row{display:flex;align-items:center;gap:14px}
+input[type=range]{flex:1;appearance:none;height:3px;background:var(--s3);border-radius:4px;outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--k1);cursor:pointer}
+.sl-val{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--k1);min-width:36px;text-align:right}
+.gen-btn{width:100%;padding:18px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--k2),var(--k1));color:white;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+.gen-btn:hover:not([disabled]){transform:translateY(-2px)}
+.gen-btn[disabled]{opacity:.5;cursor:not-allowed}
+.spin{width:20px;height:20px;border:2px solid rgba(255,255,255,.25);border-top-color:white;border-radius:50%;animation:rot .7s linear infinite;display:none;flex-shrink:0}
+@keyframes rot{to{transform:rotate(360deg)}}
+.rblock{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px}
+.rb-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--s2);border-bottom:1px solid var(--border)}
+.rb-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2)}
+.rb-body{padding:16px 18px}
+.pbox{background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.85;color:var(--muted2);white-space:pre-wrap;word-break:break-word}
+.hook-box{background:rgba(255,45,120,0.07);border:1px solid rgba(255,45,120,0.2);border-radius:10px;padding:14px 16px;font-size:16px;font-weight:700;color:var(--text);line-height:1.5}
+.hook-sub{font-size:9px;font-weight:700;letter-spacing:3px;color:var(--k3);text-transform:uppercase;margin-bottom:6px}
+.settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:500px){.settings-grid{grid-template-columns:repeat(2,1fr)}}
+.sg-item{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px}
+.sg-key{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.sg-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--k1)}
+.copy-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--s3);color:var(--muted2);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif}
+.copy-btn.ok{border-color:var(--green);color:var(--green)}
+.cap-item{background:var(--s2);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.cap-head{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--s3);border-bottom:1px solid var(--border)}
+.cap-net{font-size:10px;font-weight:700;letter-spacing:1px}
+.c-tiktok{color:#69c9d0}.c-reels{color:#e1306c}.c-shorts{color:#ff4444}
+.cap-body{padding:10px 14px;font-size:12.5px;line-height:1.7;color:var(--muted2);white-space:pre-wrap}
+.next-btn{width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--k2),var(--k1));color:white;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;cursor:pointer;margin-top:4px}
+.kling-launch{width:100%;padding:16px;border-radius:12px;border:1px solid rgba(0,229,255,0.3);background:rgba(0,229,255,0.06);color:var(--k1);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.mstep{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:10px}
+.mstep-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none}
+.mstep-num{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;flex-shrink:0}
+.n-auto{background:linear-gradient(135deg,var(--k2),var(--k1));color:white}
+.n-manual{background:rgba(255,140,0,0.15);color:var(--orange);border:1px solid rgba(255,140,0,0.3)}
+.mstep-body{display:none;padding:16px 18px;border-top:1px solid var(--border);font-size:13px;color:var(--muted2);line-height:1.7}
+.mstep-body strong{color:var(--text)}
+.warning-box{padding:10px 14px;background:rgba(255,229,102,0.06);border:1px solid rgba(255,229,102,0.2);border-radius:10px;font-size:12px;color:var(--yellow);line-height:1.6;margin:10px 0}
+.module-item{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--s2);border:1px solid var(--border2);border-radius:8px;margin-bottom:6px}
+.m-num{width:22px;height:22px;border-radius:4px;background:var(--k2);color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.m-name{font-size:12px;font-weight:600;color:var(--text)}
+.m-desc{font-size:11px;color:var(--muted2)}
+.skel{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px}
+.sl{height:11px;background:var(--s2);border-radius:5px;margin-bottom:10px;animation:sh 1.4s infinite}
+@keyframes sh{0%,100%{opacity:1}50%{opacity:.4}}
+.err{padding:14px 18px;background:rgba(255,45,120,0.07);border:1px solid rgba(255,45,120,0.2);border-radius:14px;color:var(--k3);font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="bg"><div class="orb o1"></div><div class="orb o2"></div></div>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="logo">AUTOVIRAL HUB</div>
+    <div class="logo-sub">Prompt → Kling → Drive → Réseaux</div>
+    <div class="hdr-badge">⚡ 3 actions manuelles · tout le reste est automatique</div>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipe-step active"><span class="pipe-icon">🤖</span><span class="pipe-label">Génère</span><span class="pipe-tag tag-auto">Auto</span></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><span class="pipe-icon">🎬</span><span class="pipe-label">Kling</span><span class="pipe-tag tag-manual">1 clic</span></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step"><span class="pipe-icon">☁️</span><span class="pipe-label">Drive</span><span class="pipe-tag tag-manual">1 clic</span></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step is-auto"><span class="pipe-icon">📱</span><span class="pipe-label">Réseaux</span><span class="pipe-tag tag-auto">Auto</span></div>
+  </div>
+
+  <div class="tabs-nav">
+    <div class="tnav on" data-tab="generator">🚀 Générateur</div>
+    <div class="tnav" data-tab="launcher">🎬 Kling</div>
+    <div class="tnav" data-tab="drive">☁️ Drive</div>
+    <div class="tnav" data-tab="make">⚙️ Make.com</div>
+  </div>
+
+  <div class="tab-panel on" id="tab-generator">
+    <div class="card">
+      <div class="card-title"><span class="acc">①</span> Profil</div>
+      <div class="row2">
+        <div class="field"><label>Prénom</label><input id="f-name" type="text" placeholder="Romain"/></div>
+        <div class="field"><label>Niche</label><input id="f-niche" type="text" placeholder="IA et automatisation"/></div>
+      </div>
+      <div class="field"><label>Sujet (vide = trend auto)</label><textarea id="f-topic" placeholder="Laisse vide → le bot trouve le trend viral du moment"></textarea></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="acc">②</span> Style vidéo</div>
+      <div class="field">
+        <label>Style visuel Kling</label>
+        <div class="chips" id="styleC">
+          <div class="chip on" data-v="cinematic realism, photorealistic, high detail">🎥 Ciné</div>
+          <div class="chip" data-v="dark moody atmosphere, dramatic lighting, noir">🌑 Dark</div>
+          <div class="chip" data-v="bright energetic, Gen Z aesthetic, viral social media">⚡ Viral</div>
+          <div class="chip" data-v="anime style, vibrant 2D animation">✨ Anime</div>
+          <div class="chip" data-v="documentary real footage, natural lighting">📹 Docu</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Durée cible</label>
+        <div class="sl-row">
+          <input type="range" id="f-dur" min="5" max="60" value="15" step="5"/>
+          <span class="sl-val" id="dur-val">15s</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Ton</label>
+        <div class="chips" id="toneC">
+          <div class="chip on" data-t="inspiring and motivational, powerful">🔥 Inspirant</div>
+          <div class="chip" data-t="shocking and controversial, provocative">😱 Choc</div>
+          <div class="chip" data-t="funny entertaining, humorous">😂 Drôle</div>
+          <div class="chip" data-t="educational informative, expert tone">🧠 Éducatif</div>
+        </div>
+      </div>
+    </div>
+    <button class="gen-btn" id="gen-btn">
+      <div class="spin" id="gen-spin"></div>
+      <span id="gen-txt">🚀 GÉNÉRER</span>
+    </button>
+    <div id="results"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-launcher">
+    <div class="card">
+      <div class="card-title"><span class="acc">🎬</span> Kling Launcher</div>
+      <div id="no-prompt-msg" style="padding:20px;text-align:center;color:var(--muted);font-size:13px">⚠️ Génère d'abord un prompt dans l'onglet Générateur</div>
+      <div id="prompt-ready" style="display:none">
+        <div class="rblock">
+          <div class="rb-head"><span class="rb-label">🤖 Prompt prêt</span><button class="copy-btn" id="cp-launch-btn">📋 Copier</button></div>
+          <div class="rb-body"><div class="pbox" id="stored-prompt-el"></div></div>
+        </div>
+        <div class="rblock" style="margin-bottom:14px">
+          <div class="rb-head"><span class="rb-label">⚙️ Réglages Kling</span></div>
+          <div class="rb-body"><div class="settings-grid" id="launch-settings"></div></div>
+        </div>
+        <button class="kling-launch" id="open-kling-btn">🎬 OUVRIR KLING + COPIER LE PROMPT</button>
+        <p style="text-align:center;font-size:11px;color:var(--muted)">Kling s'ouvre → Video Generation → colle (Cmd+V)</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="acc">📋</span> Checklist</div>
+      <div id="checklist"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-drive">
+    <div class="card">
+      <div class="card-title"><span class="acc">☁️</span> Upload Google Drive</div>
+      <p style="font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:16px">Dépose ta vidéo Kling → Make.com la détecte → publication automatique.</p>
+      <div class="field"><label>ID du dossier Drive</label><input id="folder-id" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs"/></div>
+      <div style="border:2px dashed var(--border2);border-radius:12px;padding:28px;text-align:center;position:relative" id="drop-zone">
+        <input type="file" id="video-file" accept="video/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%"/>
+        <div style="font-size:32px;margin-bottom:8px">📹</div>
+        <div style="font-size:13px;color:var(--muted2)">Glisse ta vidéo ou <strong style="color:var(--k1)">clique ici</strong></div>
+      </div>
+      <div id="upload-progress" style="height:4px;background:var(--s3);border-radius:4px;margin-top:12px;overflow:hidden;display:none">
+        <div id="upload-bar" style="height:100%;background:linear-gradient(90deg,var(--k2),var(--k1));width:0%;transition:width .3s"></div>
+      </div>
+      <div id="drive-result" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2);border-radius:10px">
+        <div style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:4px">✅ Vidéo uploadée</div>
+        <a id="drive-link" href="#" target="_blank" style="color:var(--green);font-size:12px">Ouvrir dans Drive →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-make">
+    <div style="padding:16px 20px;background:linear-gradient(135deg,rgba(123,47,255,0.08),rgba(0,229,255,0.04));border:1px solid rgba(123,47,255,0.2);border-radius:14px;margin-bottom:20px;font-size:13px;color:var(--muted2);line-height:1.7">
+      Configure <strong style="color:var(--k2)">Make.com (gratuit)</strong> une seule fois → publication automatique sur TikTok, Reels, Shorts.
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="acc">🗺️</span> Le scénario</div>
+      <div id="module-list"></div>
+    </div>
+    <div id="make-steps"></div>
+    <div style="margin-top:16px;padding:20px;background:linear-gradient(135deg,rgba(0,229,160,0.06),rgba(0,229,255,0.04));border:1px solid rgba(0,229,160,0.2);border-radius:16px;font-size:13px;color:var(--muted2)">
+      <div style="font-weight:700;color:var(--green);margin-bottom:12px">🎯 3 actions manuelles seulement</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div><span style="color:var(--k1);font-weight:700">① </span>Coller le prompt dans Kling + Generate</div>
+        <div><span style="color:var(--k1);font-weight:700">② </span>Télécharger la vidéo</div>
+        <div><span style="color:var(--k1);font-weight:700">③ </span>Glisser dans Drive</div>
+        <div style="color:var(--green);font-weight:600">✅ Make.com publie sur TikTok + Reels + Shorts</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+'use strict';
+var storedPrompt='';
+var storedSettings={};
+
+document.querySelectorAll('.tnav').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tnav').forEach(function(b){b.classList.remove('on');});
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('on');});
+    btn.classList.add('on');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('on');
+  });
+});
+
+['styleC','toneC'].forEach(function(id){
+  document.getElementById(id).querySelectorAll('.chip').forEach(function(c){
+    c.addEventListener('click',function(){
+      document.getElementById(id).querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');});
+      c.classList.add('on');
+    });
+  });
+});
+
+function getSel(id,attr){
+  var el=document.querySelector('#'+id+' .chip.on');
+  return el?(el.dataset[attr]||''):'';
+}
+
+document.getElementById('f-dur').addEventListener('input',function(){
+  document.getElementById('dur-val').textContent=this.value+'s';
+});
+
+var checks=['Ouvrir klingai.com → Video Generation','Coller le prompt (Cmd+V)','Régler durée + ratio 9:16','Cliquer Generate → attendre 4-6 min','Télécharger la vidéo','Glisser dans Drive →'];
+var cl=document.getElementById('checklist');
+checks.forEach(function(txt){
+  var lbl=document.createElement('label');
+  lbl.style.cssText='display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--muted2);margin-bottom:8px';
+  var cb=document.createElement('input');
+  cb.type='checkbox';
+  cb.addEventListener('change',function(){
+    lbl.style.textDecoration=cb.checked?'line-through':'none';
+    lbl.style.color=cb.checked?'var(--green)':'var(--muted2)';
+  });
+  var span=document.createElement('span');
+  span.textContent=txt;
+  lbl.appendChild(cb);lbl.appendChild(span);
+  cl.appendChild(lbl);
+});
+
+var modules=[
+  ['1','Google Drive — Watch Files','Surveille le dossier, déclenche à chaque nouveau fichier'],
+  ['2','Google Drive — Download File','Récupère la vidéo'],
+  ['3','Router','3 branches parallèles'],
+  ['4a','TikTok — Upload Video','Publication automatique','var(--green)'],
+  ['4b','HTTP — Instagram Graph API','Publication Reel','var(--green)'],
+  ['4c','YouTube — Upload Video','Publication Short','var(--green)']
+];
+var ml=document.getElementById('module-list');
+modules.forEach(function(m){
+  var d=document.createElement('div');
+  d.className='module-item';
+  d.innerHTML='<div class="m-num" style="background:'+(m[3]||'var(--k2)')+'">'+m[0]+'</div><div><div class="m-name">'+m[1]+'</div><div class="m-desc">'+m[2]+'</div></div>';
+  ml.appendChild(d);
+});
+
+var makeSteps=[
+  {n:'1',cls:'n-manual',title:'Créer un compte Make.com',sub:'Gratuit · 1000 ops/mois',body:'Va sur <strong>make.com</strong> → crée un compte gratuit → clique <strong>Create a new scenario</strong>.'},
+  {n:'2',cls:'n-manual',title:'Créer le dossier Drive',sub:'Le dossier que Make surveille',body:'Crée un dossier <strong>AutoViral — À publier</strong> dans Drive. Copie son ID depuis l\'URL.'},
+  {n:'3',cls:'n-auto',title:'Module 1 : Watch Files',sub:'Trigger automatique',body:'"+" → Google Drive → Watch Files → connecte ton Google → sélectionne le dossier.<div class="warning-box">⚠️ Clique Run once pour initialiser le trigger.</div>'},
+  {n:'4',cls:'n-auto',title:'Module 2 + Router',sub:'Download + 3 branches',body:'Ajoute <strong>Download a File</strong> puis un <strong>Router</strong> → 3 branches : TikTok, Instagram, YouTube.'},
+  {n:'5',cls:'n-auto',title:'Branches publication',sub:'TikTok + Reels + Shorts',body:'<strong>TikTok</strong> : TikTok → Upload Video.<br><strong>Instagram</strong> : HTTP → Instagram Graph API.<br><strong>YouTube</strong> : YouTube → Upload Video.<div class="warning-box">⚠️ Instagram nécessite un compte Pro lié à une Page Facebook.</div>'},
+  {n:'6',cls:'n-auto',title:'Activer le scénario',sub:'Toutes les 15 min',body:'Save → toggle ON → fréquence 15 min.<br><strong style="color:var(--green)">✅ Vidéo dans Drive = publication automatique partout.</strong>'}
+];
+var ms=document.getElementById('make-steps');
+makeSteps.forEach(function(s){
+  var div=document.createElement('div');
+  div.className='mstep';
+  var head=document.createElement('div');
+  head.className='mstep-head';
+  head.innerHTML='<div class="mstep-num '+s.cls+'">'+s.n+'</div><div style="flex:1"><div style="font-size:14px;font-weight:700;margin-bottom:2px">'+s.title+'</div><div style="font-size:11px;color:var(--muted2)">'+s.sub+'</div></div><span style="color:var(--muted);margin-left:8px">▼</span>';
+  var body=document.createElement('div');
+  body.className='mstep-body';
+  body.innerHTML=s.body;
+  head.addEventListener('click',function(){
+    var open=body.style.display==='block';
+    body.style.display=open?'none':'block';
+    head.querySelector('span').style.transform=open?'':'rotate(180deg)';
+  });
+  div.appendChild(head);div.appendChild(body);
+  ms.appendChild(div);
+});
+
+document.getElementById('gen-btn').addEventListener('click',generate);
+
+function setLoading(on){
+  var btn=document.getElementById('gen-btn');
+  if(on){btn.setAttribute('disabled','');}else{btn.removeAttribute('disabled');}
+  document.getElementById('gen-spin').style.display=on?'block':'none';
+  document.getElementById('gen-txt').textContent=on?'GÉNÉRATION...':'🚀 GÉNÉRER';
+}
+
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function copyText(btn,txt){
+  try{
+    await navigator.clipboard.writeText(txt);
+    var orig=btn.textContent;
+    btn.textContent='✅ Copié!';
+    btn.classList.add('ok');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('ok');},2000);
+  }catch(e){}
+}
+
+async function generate(){
+  var name=document.getElementById('f-name').value.trim();
+  var niche=document.getElementById('f-niche').value.trim();
+  var topic=document.getElementById('f-topic').value.trim();
+  var dur=document.getElementById('f-dur').value;
+  var style=getSel('styleC','v');
+  var tone=getSel('toneC','t');
+  if(!name||!niche){alert('Remplis ton prénom et ta niche 🙏');return;}
+  setLoading(true);
+  document.getElementById('results').innerHTML='<div class="skel"><div class="sl" style="width:40%"></div><div class="sl"></div><div class="sl" style="width:70%"></div></div><div class="skel"><div class="sl" style="width:55%"></div><div class="sl"></div><div class="sl"></div></div>';
+  var today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var userMsg='Date : '+today+'\nCréateur : '+name+' | Niche : '+niche+'\nStyle : '+style+' | Durée : '+dur+'s | Ton : '+tone+'\n'+(topic?'Sujet : '+topic:'Trouve le trend le plus viral du moment pour la niche "'+niche+'"')+'\n\nGénère ce JSON strict sans backticks :\n{"trend":{"title":"...","why":"..."},"hook":"accroche max 12 mots français","kling_prompt":"prompt Kling ANGLAIS 80-120 mots [scene][camera][lighting][style: '+style+'][mood: '+tone+'] vertical 9:16 '+dur+' seconds viral quality","kling_settings":{"duration":"'+dur+'s","aspect_ratio":"9:16","camera":"mouvement","creativity":"0.5","mode":"'+(parseInt(dur)<=10?'Standard':'Professional')+'"},"script":"voix-off français phrases courtes","captions":{"tiktok":"caption hashtags","reels":"caption CTA hashtags","shorts":"titre SEO 60 chars"},"tips":["tip viralité","horaire optimal"]}';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:2000,
+        system:'Tu es expert viral content et Kling AI. Réponds UNIQUEMENT en JSON valide strict, sans backticks, sans texte avant ou après.',
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    var data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    var raw=(data.content||[]).filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    if(!raw)throw new Error('Réponse vide.');
+    var parsed;
+    try{parsed=JSON.parse(raw.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim());}
+    catch(e1){
+      try{var m=raw.match(/\{[\s\S]*\}/);if(!m)throw new Error('x');parsed=JSON.parse(m[0]);}
+      catch(e2){var si=raw.indexOf('{'),ei=raw.lastIndexOf('}');if(si<0||ei<0)throw new Error('Réponse invalide.');parsed=JSON.parse(raw.slice(si,ei+1));}
+    }
+    storedPrompt=parsed.kling_prompt||'';
+    storedSettings=parsed.kling_settings||{};
+    renderResults(parsed);
+    updateLauncher();
+  }catch(e){
+    document.getElementById('results').innerHTML='<div class="err">⚠️ '+esc(e.message||'Erreur.')+'</div>';
+  }finally{setLoading(false);}
+}
+
+function renderResults(d){
+  var el=document.getElementById('results');
+  var html='';
+  if(d.trend)html+='<div class="rblock"><div class="rb-head"><span class="rb-label">🔥 Trend</span></div><div class="rb-body"><div style="font-size:14px;font-weight:700;color:var(--yellow);margin-bottom:4px">'+esc(d.trend.title)+'</div><div style="font-size:12px;color:var(--muted2)">'+esc(d.trend.why)+'</div></div></div>';
+  if(d.hook)html+='<div class="rblock"><div class="rb-head"><span class="rb-label">🎯 Hook</span><button class="copy-btn" data-target="hook">📋 Copier</button></div><div class="rb-body"><div class="hook-box"><div class="hook-sub">DIS ÇA EN PREMIER</div>'+esc(d.hook)+'</div></div></div>';
+  if(d.kling_prompt)html+='<div class="rblock"><div class="rb-head"><span class="rb-label">🤖 Prompt Kling</span><button class="copy-btn" data-target="kling">📋 Copier</button></div><div class="rb-body"><div class="pbox">'+esc(d.kling_prompt)+'</div></div></div>';
+  if(d.kling_settings){var sg=Object.entries(d.kling_settings).map(function(e){return '<div class="sg-item"><div class="sg-key">'+esc(e[0].replace(/_/g,' '))+'</div><div class="sg-val">'+esc(e[1])+'</div></div>';}).join('');html+='<div class="rblock"><div class="rb-head"><span class="rb-label">⚙️ Réglages Kling</span></div><div class="rb-body"><div class="settings-grid">'+sg+'</div></div></div>';}
+  if(d.script)html+='<div class="rblock"><div class="rb-head"><span class="rb-label">🎙️ Script</span><button class="copy-btn" data-target="script">📋 Copier</button></div><div class="rb-body"><div class="pbox" style="color:var(--text);font-family:Outfit,sans-serif;font-size:13px;line-height:1.9">'+esc(d.script)+'</div></div></div>';
+  if(d.captions){var caps=[['tiktok','🎵 TikTok','c-tiktok'],['reels','📸 Reels','c-reels'],['shorts','▶️ Shorts','c-shorts']];var ch=caps.map(function(c){if(!d.captions[c[0]])return '';return '<div class="cap-item"><div class="cap-head"><span class="cap-net '+c[2]+'">'+c[1]+'</span><button class="copy-btn" data-target="cap-'+c[0]+'">📋 Copier</button></div><div class="cap-body">'+esc(d.captions[c[0]])+'</div></div>';}).join('');html+='<div class="rblock"><div class="rb-head"><span class="rb-label">✍️ Captions</span></div><div class="rb-body">'+ch+'</div></div>';}
+  if(d.tips&&d.tips.length){var th=d.tips.map(function(t,i){return '<div style="display:flex;gap:10px;font-size:13px;color:var(--muted2);margin-bottom:8px"><span style="color:var(--orange);font-weight:700;min-width:18px">'+(i+1)+'.</span><span>'+esc(t)+'</span></div>';}).join('');html+='<div class="rblock"><div class="rb-head"><span class="rb-label">💡 Tips</span></div><div class="rb-body">'+th+'</div></div>';}
+  html+='<button class="next-btn" id="go-launcher-btn">→ OUVRIR KLING 🎬</button>';
+  el.innerHTML=html;
+  var _d=d;
+  el.querySelectorAll('.copy-btn[data-target]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var t=btn.dataset.target;
+      var txt='';
+      if(t==='hook')txt=_d.hook||'';
+      else if(t==='kling')txt=_d.kling_prompt||'';
+      else if(t==='script')txt=_d.script||'';
+      else if(t.startsWith('cap-'))txt=(_d.captions||{})[t.replace('cap-','')]||'';
+      copyText(btn,txt);
+    });
+  });
+  document.getElementById('go-launcher-btn').addEventListener('click',function(){
+    document.querySelectorAll('.tnav').forEach(function(b){b.classList.remove('on');});
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('on');});
+    document.querySelector('[data-tab="launcher"]').classList.add('on');
+    document.getElementById('tab-launcher').classList.add('on');
+  });
+}
+
+function updateLauncher(){
+  if(!storedPrompt)return;
+  document.getElementById('no-prompt-msg').style.display='none';
+  document.getElementById('prompt-ready').style.display='block';
+  document.getElementById('stored-prompt-el').textContent=storedPrompt;
+  var ls=document.getElementById('launch-settings');
+  ls.innerHTML=Object.entries(storedSettings).map(function(e){return '<div class="sg-item"><div class="sg-key">'+esc(e[0].replace(/_/g,' '))+'</div><div class="sg-val">'+esc(e[1])+'</div></div>';}).join('');
+  var cpBtn=document.getElementById('cp-launch-btn');
+  cpBtn.replaceWith(cpBtn.cloneNode(true));
+  document.getElementById('cp-launch-btn').addEventListener('click',function(){copyText(this,storedPrompt);});
+  var klBtn=document.getElementById('open-kling-btn');
+  klBtn.replaceWith(klBtn.cloneNode(true));
+  document.getElementById('open-kling-btn').addEventListener('click',async function(){
+    try{await navigator.clipboard.writeText(storedPrompt);}catch(e){}
+    window.open('https://klingai.com/text-to-video/new','_blank');
+    var b=document.getElementById('open-kling-btn');
+    b.textContent='✅ PROMPT COPIÉ — COLLE DANS KLING';
+    setTimeout(function(){b.textContent='🎬 OUVRIR KLING + COPIER LE PROMPT';},4000);
+  });
+}
+
+document.getElementById('video-file').addEventListener('change',function(){if(this.files[0])handleFile(this.files[0]);});
+function handleFile(file){
+  var fid=document.getElementById('folder-id').value.trim();
+  if(!fid){alert('Entre l\'ID du dossier Drive.');return;}
+  var prog=document.getElementById('upload-progress');
+  var bar=document.getElementById('upload-bar');
+  prog.style.display='block';
+  var w=0;
+  var iv=setInterval(function(){
+    w+=Math.random()*20;
+    if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('drive-result').style.display='block';document.getElementById('drive-link').href='https://drive.google.com/drive/folders/'+fid;document.getElementById('drive-link').textContent='Voir dans Drive → '+file.name;},300);}
+    bar.style.width=w+'%';
+  },180);
+}
+
+})();
+</script>
+</body>
+</html>
