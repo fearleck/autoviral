@@ -371,7 +371,7 @@ async function generate(){
   var today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   var userMsg='Date : '+today+'\nCréateur : '+name+' | Niche : '+niche+'\nStyle : '+style+' | Durée : '+dur+'s | Ton : '+tone+'\n'+(topic?'Sujet : '+topic:'Trouve le trend le plus viral du moment pour la niche "'+niche+'"')+'\n\nGénère ce JSON strict sans backticks :\n{"trend":{"title":"...","why":"..."},"hook":"accroche max 12 mots français","kling_prompt":"prompt Kling ANGLAIS 80-120 mots [scene][camera][lighting][style: '+style+'][mood: '+tone+'] vertical 9:16 '+dur+' seconds viral quality","kling_settings":{"duration":"'+dur+'s","aspect_ratio":"9:16","camera":"mouvement","creativity":"0.5","mode":"'+(parseInt(dur)<=10?'Standard':'Professional')+'"},"script":"voix-off français phrases courtes","captions":{"tiktok":"caption hashtags","reels":"caption CTA hashtags","shorts":"titre SEO 60 chars"},"tips":["tip viralité","horaire optimal"]}';
   try{
-    var res=await fetch('https://api.anthropic.com/v1/messages',{
+    var res=await fetch('/.netlify/functions/generate',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
